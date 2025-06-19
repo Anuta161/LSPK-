@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Заметки ЛСПК | Мои заметки</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="assets/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* Общие стили из главной страницы */
+        .app-container {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f7fa;
+            color: #333;
+        }
+        
+        .app-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+            background-color: #fff;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .logo {
+            height: 40px;
+        }
+        
+        .main-nav {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+        
+        .main-nav a {
+            text-decoration: none;
+            color: #555;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        
+        .main-nav a.active {
+            color: #4a6bff;
+            font-weight: 600;
+        }
+        
+        .main-nav a:hover {
+            color: #4a6bff;
+        }
+        
+        .btn-primary {
+            background-color: #4a6bff;
+            color: white;
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background-color 0.3s;
+        }
+        
+        .btn-primary:hover {
+            background-color: #3a5bef;
+        }
+        
+        .app-main {
+            flex: 1;
+            padding: 2rem;
+        }
+        
+        .app-footer {
+            background-color: #fff;
+            padding: 1.5rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+        }
+        
+        .social-links {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .social-links a {
+            color: #555;
+            font-size: 1.2rem;
+            transition: color 0.3s;
+        }
+        
+        .social-links a:hover {
+            color: #4a6bff;
+        }
+        
+        /* Стили для страницы заметок */
+        .notes-page {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .notes-container {
+            display: flex;
+            gap: 2rem;
+            margin-top: 1rem;
+        }
+        
+        .notes-sidebar {
+            flex: 0 0 280px;
+            background: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            height: fit-content;
+        }
+        
+        .notes-content {
+            flex: 1;
+            display: flex;
+            gap: 2rem;
+        }
+        
+        .notes-list-container {
+            flex: 1;
+            background: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        
+        .note-editor-container {
+            flex: 1;
+            background: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        
+        #new-note-btn {
+            width: 100%;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        
+        .search-container {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+        
+        #note-search {
+            width: 100%;
+            padding: 0.6rem 1rem 0.6rem 2.5rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 0.9rem;
+        }
+        
+        .search-container i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #888;
+        }
+        
+        .category-filter h3, .tags-filter h3 {
+            margin-bottom: 1rem;
+            font-size: 1rem;
+            color: #555;
+        }
+        
+        .category-filter ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .category-filter li {
+            margin-bottom: 0.5rem;
+        }
+        
+        .category-link {
+            display: block;
+            padding: 0.5rem 0.8rem;
+            border-radius: 5px;
+            text-decoration: none;
+            color: #555;
+            transition: all 0.3s;
+        }
+        
+        .category-link:hover, .category-link.active {
+            background-color: #f0f4ff;
+            color: #4a6bff;
+        }
+        
+        .tags-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        
+        .tag {
+            display: inline-block;
+            background-color: #f0f4ff;
+            color: #4a6bff;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .tag:hover {
+            background-color: #e0e9ff;
+        }
+        
+        .tag.active {
+            background-color: #4a6bff;
+            color: white;
+        }
+        
+        #current-category {
+            margin-bottom: 1.5rem;
+            color: #333;
+        }
+        
+        .notes-list {
+            display: grid;
+            gap: 1rem;
+        }
+        
+        .note-card {
+            padding: 1rem;
+            border-radius: 5px;
+            border: 1px solid #eee;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .note-card:hover {
+            border-color: #4a6bff;
+            box-shadow: 0 2px 8px rgba(74, 107, 255, 0.1);
+        }
+        
+        .note-card.active {
+            border-color: #4a6bff;
+            background-color: #f0f4ff;
+        }
+        
+        .note-card-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .note-card-preview {
+            font-size: 0.9rem;
+            color: #666;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            margin-bottom: 0.5rem;
+        }
+        
+        .note-card-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            color: #888;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: #888;
+        }
+        
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: #ddd;
+        }
+        
+        .empty-state p {
+            margin-bottom: 1.5rem;
+        }
+        
+        #empty-new-note {
+            width: 100%;
+        }
+        
+        .editor-empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: #888;
+        }
+        
+        .editor-empty-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: #ddd;
+        }
+        
+        .editor-content {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+        
+        .editor-header {
+            display: flex;
+            margin-bottom: 1rem;
+        }
+        
+        #note-title {
+            flex: 1;
+            font-size: 1.2rem;
+            font-weight: 600;
+            border: none;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        #note-title:focus {
+            outline: none;
+            border-bottom-color: #4a6bff;
+        }
+        
+        .editor-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .btn-icon {
+            background: none;
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: #888;
+            transition: all 0.3s;
+        }
+        
+        .btn-icon:hover {
+            background-color: #f5f5f5;
+            color: #4a6bff;
+        }
+        
+        .note-meta {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            align-items: center;
+        }
+        
+        #note-category {
+            padding: 0.4rem 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: white;
+            font-size: 0.9rem;
+        }
+        
+        .tags-input-container {
+            flex: 1;
+            position: relative;
+        }
+        
+        #note-tags {
+            width: 100%;
+            padding: 0.4rem 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 0.9rem;
+        }
+        
+        #note-content {
+            flex: 1;
+            border: none;
+            resize: none;
+            font-family: inherit;
+            font-size: 1rem;
+            line-height: 1.5;
+            padding: 0.5rem 0;
+            margin-bottom: 1rem;
+        }
+        
+        #note-content:focus {
+            outline: none;
+        }
+        
+        .editor-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 0.5rem;
+            border-top: 1px solid #eee;
+        }
+        
+        .formatting-tools {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .format-btn {
+            background: none;
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 3px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: #888;
+            transition: all 0.3s;
+        }
+        
+        .format-btn:hover {
+            background-color: #f5f5f5;
+            color: #4a6bff;
+        }
+        
+        .note-info {
+            font-size: 0.8rem;
+            color: #888;
+            display: flex;
+            gap: 1rem;
+        }
+        
+        /* Модальные окна */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content {
+            background-color: white;
+            border-radius: 8px;
+            padding: 2rem;
+            width: 100%;
+            max-width: 500px;
+            position: relative;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+        }
+        
+        .modal-content.small {
+            max-width: 400px;
+        }
+        
+        .close-modal {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #888;
+            transition: color 0.3s;
+        }
+        
+        .close-modal:hover {
+            color: #333;
+        }
+        
+        .auth-tabs {
+            display: flex;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .tab-btn {
+            padding: 0.5rem 1rem;
+            background: none;
+            border: none;
+            border-bottom: 2px solid transparent;
+            cursor: pointer;
+            font-weight: 500;
+            color: #888;
+            transition: all 0.3s;
+        }
+        
+        .tab-btn.active {
+            color: #4a6bff;
+            border-bottom-color: #4a6bff;
+        }
+        
+        .auth-form {
+            display: none;
+        }
+        
+        .auth-form.active {
+            display: block;
+        }
+        
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            color: #555;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 0.6rem 1rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 0.9rem;
+        }
+        
+        .form-group input:focus {
+            outline: none;
+            border-color: #4a6bff;
+        }
+        
+        .forgot-password {
+            display: inline-block;
+            margin-top: 1rem;
+            font-size: 0.8rem;
+            color: #888;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .forgot-password:hover {
+            color: #4a6bff;
+        }
+        
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+        
+        .btn-secondary {
+            background-color: #f0f0f0;
+            color: #555;
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background-color 0.3s;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #e0e0e0;
+        }
+        
+        .btn-danger {
+            background-color: #ff4a4a;
+            color: white;
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background-color 0.3s;
+        }
+        
+        .btn-danger:hover {
+            background-color: #e63a3a;
+        }
+        
+        @media (max-width: 1200px) {
+            .notes-content {
+                flex-direction: column;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .notes-container {
+                flex-direction: column;
+            }
+            
+            .notes-sidebar {
+                flex: 0 0 auto;
+            }
+            
+            .app-header {
+                padding: 1rem;
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .main-nav {
+                width: 100%;
+                justify-content: space-between;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Шапка -->
+        <header class="app-header">
+            <div class="logo-container">
+                <img src="file:///E:/флешка%20(аня)/И3Б/ПП/продукт%20переделанный/ЛОГО.png" alt="Логотип Заметки ЛСПК" class="logo">
+                <h1>Заметки ЛСПК</h1>
+            </div>
+            <nav class="main-nav">
+                <a href="index.html">Главная</a>
+                <a href="about.html" class="active">Мои заметки</a>
+                <a href="auth.html" class="btn-primary">Войти</a>
+            </nav>
+        </header>
+
+        <!-- Основное содержимое -->
+        <main class="app-main notes-page">
+            <div class="notes-container">
+                <!-- Боковая панель фильтров -->
+                <aside class="notes-sidebar">
+                    <button id="new-note-btn" class="btn-primary">
+                        <i class="fas fa-plus"></i> Новая заметка
+                    </button>
+                    
+                    <div class="search-container">
+                        <input type="text" id="note-search" placeholder="Поиск заметок...">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    
+                    <div class="category-filter">
+                        <h3>Категории</h3>
+                        <ul>
+                            <li><a href="#" class="category-link active" data-category="all">Все заметки</a></li>
+                            <li><a href="#" class="category-link" data-category="study">Учеба</a></li>
+                            <li><a href="#" class="category-link" data-category="personal">Личные</a></li>
+                            <li><a href="#" class="category-link" data-category="work">Работа</a></li>
+                        </ul>
+                    </div>
+                    
+                    <div class="tags-filter">
+                        <h3>Теги</h3>
+                        <div class="tags-container" id="tags-container">
+                            <!-- Теги будут добавляться динамически -->
+                        </div>
+                    </div>
+                </aside>
+
+                <!-- Основная область с заметками -->
+                <section class="notes-content">
+                    <div class="notes-list-container">
+                        <h2 id="current-category">Все заметки</h2>
+                        
+                        <div class="notes-list" id="notes-list">
+                            <!-- Список заметок будет заполняться динамически -->
+                            <div class="empty-state">
+                                <i class="fas fa-sticky-note"></i>
+                                <p>Нет заметок</p>
+                                <button id="empty-new-note" class="btn-primary">Создать заметку</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="note-editor-container">
+                        <div class="note-editor" id="note-editor">
+                            <div class="editor-empty-state">
+                                <i class="fas fa-edit"></i>
+                                <p>Выберите заметку для редактирования или создайте новую</p>
+                            </div>
+                            
+                            <div class="editor-content" style="display: none;">
+                                <div class="editor-header">
+                                    <input type="text" id="note-title" placeholder="Название заметки">
+                                    <div class="editor-actions">
+                                        <button id="save-note" class="btn-icon" title="Сохранить">
+                                            <i class="fas fa-save"></i>
+                                        </button>
+                                        <button id="delete-note" class="btn-icon" title="Удалить">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <div class="note-meta">
+                                    <select id="note-category">
+                                        <option value="study">Учеба</option>
+                                        <option value="personal">Личные</option>
+                                        <option value="work">Работа</option>
+                                    </select>
+                                    
+                                    <div class="tags-input-container">
+                                        <input type="text" id="note-tags" placeholder="Добавить теги (через запятую)">
+                                    </div>
+                                </div>
+                                
+                                <textarea id="note-content" placeholder="Начните писать здесь..."></textarea>
+                                
+                                <div class="editor-footer">
+                                    <div class="formatting-tools">
+                                        <button class="format-btn" data-format="bold" title="Жирный"><b>B</b></button>
+                                        <button class="format-btn" data-format="italic" title="Курсив"><i>I</i></button>
+                                        <button class="format-btn" data-format="heading" title="Заголовок"><i class="fas fa-heading"></i></button>
+                                        <button class="format-btn" data-format="list" title="Список"><i class="fas fa-list-ul"></i></button>
+                                    </div>
+                                    <div class="note-info">
+                                        <span id="note-date"></span>
+                                        <span id="note-length">0 символов</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+
+        <!-- Подвал -->
+        <footer class="app-footer">
+            <p>&copy; 2025 Заметки ЛСПК. Все права защищены.</p>
+            <div class="social-links">
+                <a href="#"><i class="fab fa-vk"></i></a>
+                <a href="#"><i class="fab fa-telegram"></i></a>
+                <a href="#"><i class="fab fa-youtube"></i></a>
+            </div>
+        </footer>
+
+        <!-- Модальные окна -->
+        <div class="modal" id="auth-modal">
+            <div class="modal-content">
+                <button class="close-modal">&times;</button>
+                <h2>Вход / Регистрация</h2>
+                
+                <div class="auth-tabs">
+                    <button class="tab-btn active" data-tab="login">Вход</button>
+                    <button class="tab-btn" data-tab="register">Регистрация</button>
+                </div>
+                
+                <form id="login-form" class="auth-form active">
+                    <div class="form-group">
+                        <label for="login-email">Email</label>
+                        <input type="email" id="login-email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="login-password">Пароль</label>
+                        <input type="password" id="login-password" required>
+                    </div>
+                    <button type="submit" class="btn-primary">Войти</button>
+                    <a href="#" class="forgot-password">Забыли пароль?</a>
+                </form>
+                
+                <form id="register-form" class="auth-form">
+                    <div class="form-group">
+                        <label for="register-name">Имя</label>
+                        <input type="text" id="register-name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="register-email">Email</label>
+                        <input type="email" id="register-email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="register-password">Пароль</label>
+                        <input type="password" id="register-password" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="register-confirm">Подтвердите пароль</label>
+                        <input type="password" id="register-confirm" required>
+                    </div>
+                    <button type="submit" class="btn-primary">Зарегистрироваться</button>
+                </form>
+            </div>
+        </div>
+        
+        <div class="modal" id="confirm-modal">
+            <div class="modal-content small">
+                <h3>Подтвердите действие</h3>
+                <p id="confirm-message">Вы уверены, что хотите выполнить это действие?</p>
+                <div class="modal-actions">
+                    <button id="confirm-cancel" class="btn-secondary">Отмена</button>
+                    <button id="confirm-ok" class="btn-danger">Подтвердить</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="auth.js"></script>
+    <script src="notes.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
